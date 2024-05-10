@@ -1,0 +1,34 @@
+{
+  "parties": [
+    {
+      "id": "acbc",
+      "partyname": "Jp mobiles",
+      "partyphone": "16",
+      "partygst": "4566",
+      "billingadress": "Ajit Nagar",
+      "emailid": "manmeetsinghnss@gmail.com",
+      "openingbalance": 5000,
+      "paymentoptions": "pay"
+    },
+    {
+      "id": "e766",
+      "partyname": "Jp mobiles",
+      "partyphone": "16",
+      "partygst": "4566",
+      "billingadress": "Ajit Nagar",
+      "emailid": "manmeetsinghnss@gmail.com",
+      "openingbalance": 5000,
+      "paymentoptions": "recieve"
+    },
+    {
+      "id": "c19a",
+      "partyname": "Jp mobiles",
+      "partyphone": "8",
+      "partygst": "4566",
+      "billingadress": "Ajit Nagar",
+      "emailid": "manmeetsinghnss@gmail.com",
+      "openingbalance": 2300,
+      "paymentoptions": "recieve"
+    }
+  ]
+}
