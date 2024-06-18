@@ -47,5 +47,11 @@ app.use("/api/v1/purchase",purchase)
 app.use("/api/v1/expense",expense)
 
 
+app.get("/", (req, res) => {
+
+   res.send("Welcome to Stable Billing Backend")
+
+})
+
 
 export default app;
