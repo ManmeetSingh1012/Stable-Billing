@@ -4,6 +4,7 @@ import { addpurchase, deletepurchase, getpurchase, updatepurchase } from "../Con
 
 
 
+
 const purchase = Router();
 
 purchase.route("/addpurchase").post(verifyJWT,addpurchase)

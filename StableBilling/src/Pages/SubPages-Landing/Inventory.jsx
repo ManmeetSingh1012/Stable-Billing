@@ -4,14 +4,14 @@ import Input2 from "../../Components/input.component2"
 import Register from "../Register"
 import axios from "axios";
 import React from 'react';
-
-import { acess_token, getinventory, postinventory } from "../../constant/const";
+import { useSelector } from "react-redux";
+import { getinventory, postinventory, deleteinventory , updateinventory} from "../../constant/const";
 
 
 export default function Inventory() {
 
-   const [parties, setparties] = useState([])
-   const [error, seterror] = useState("")
+   const [inventory, setinventory] = useState([])
+   const [error, seterror] = useState()
 
    const [loading, setloading] = useState(true)
    const [reloadData, setReloadData] = useState(false);
@@ -20,8 +20,11 @@ export default function Inventory() {
    const [inventoryquantity, setinventoryquantity] = useState("")
    const [inventorysize, setinventorysize] = useState("")
 
+   const [update, setupdate] = useState(false)
+   const [id, setid] = useState("")
 
 
+   const acess_token = useSelector((state) => state.auth.accessToken);
 
    const caclculate = (data) => {
       let size = 0
@@ -33,47 +36,54 @@ export default function Inventory() {
       })
 
       let newsize = size.toLocaleString()
-      
+
       setinventorysize(newsize)
       setinventoryquantity(total)
    }
 
-   useEffect(() => {
 
-      const fetchdata = async () => {
-         setloading(true)
-         try {
+   const fetchdata = async () => {
+      setloading(true)
+      try {
 
-            await axios.get(getinventory, {
-               headers: { Authorization: `Bearer ${acess_token}` }
+         await axios.get(getinventory, {
+            headers: { Authorization: `Bearer ${acess_token}` }
+         })
+
+            .then(response => {
+
+
+
+               setinventory(response.data.data)
+               setLeng(response.data.data.length)
+               caclculate(response.data.data)
+               console.log("data", inventory)
+               //console.log("data length", parties.length)
+               seterror("")
+               //console.log("data", response.data.data)
+
+
+               setloading(false)
+
+            }).catch(error => {
+               console.log("error", error)
+               if (error.response.data.message !== "No inventory found") {
+                  seterror(error.response.data.message)
+               } else {
+                  setinventory([])
+               }
+               setloading(false)
             })
 
-               .then(response => {
-
-
-                  setparties(response.data.data)
-                  setLeng(response.data.data.length)
-                  caclculate(response.data.data)
-                  console.log("data",parties)
-                  //console.log("data length", parties.length)
-
-                  //console.log("data", response.data.data)
-
-
-                  setloading(false)
-
-               }).catch(error => {
-                  console.log("error", error)
-                  seterror(error.message)
-                  setloading(false)
-               })
-
-         } catch (error) {
-            console.log("error", error)
-            seterror(error.message)
-            setloading(false)
-         }
+      } catch (error) {
+         console.log("error", error)
+         seterror(error.message)
+         setloading(false)
       }
+   }
+   useEffect(() => {
+
+
 
       fetchdata()
 
@@ -89,7 +99,7 @@ export default function Inventory() {
 
 
    const [cardvisible, setcardvisible] = useState(false)
-   const { register, handleSubmit } = useForm({ 'paymentoptions': ['pay', 'recieve'] });
+   const { register, handleSubmit , setValue} = useForm({ 'paymentoptions': ['pay', 'recieve'] });
 
    const create = (data) => {
       console.log("check", data);
@@ -99,22 +109,64 @@ export default function Inventory() {
       data.minstock = Number(data.minstock)
 
 
+
+
+
       setcardvisible(!cardvisible)
-      try {
-         axios.post(postinventory, data, {
-            headers: { Authorization: `Bearer ${acess_token}` }
-         })
-            .then(response => {
-               console.log(response)
-               setReloadData(!reloadData)
+
+
+      if (update) {
+
+         try {
+            axios.put(`${updateinventory}/${id}`, data, {
+               headers: { Authorization: `Bearer ${acess_token}` }
             })
-            .catch(error => {
-               console.log("error", error)
-               seterror(error.message)
+               .then(response => {
+                  //console.log(response)
+                  setReloadData(!reloadData)
+                  seterror("")
+               })
+               .catch(error => {
+                  console.log("error", error)
+                  seterror(error.response.data.message)
+               }).finally(() => {
+                  setValue('productname', "");
+                  setValue('productid',"");
+                  setValue('minstock',"");
+                  setValue('quantity', "");
+                  setValue('unitprice', "");
+
+                  setupdate(!update)
+                 
+                  setid("")
+
+               })
+         } catch (error) {
+            console.log("error", error)
+            seterror(error.message)
+         }
+      }
+      else {
+
+
+         try {
+            axios.post(postinventory, data, {
+               headers: { Authorization: `Bearer ${acess_token}` }
             })
-      } catch (error) {
-         console.log("error", error)
-         seterror(error.message)
+               .then(response => {
+                  console.log(response)
+                  setReloadData(!reloadData)
+                  seterror("")
+               })
+               .catch(error => {
+                  console.log("error", error)
+                  seterror(error.response.data.message)
+               })
+         } catch (error) {
+            console.log("error", error)
+            seterror(error.message)
+         }
+
       }
    }
 
@@ -122,22 +174,76 @@ export default function Inventory() {
       setcardvisible(!cardvisible)
       console.log(cardvisible)
       //alert("button clicked")
+
+      setValue('productname', "");
+                  setValue('productid',"");
+                  setValue('minstock',"");
+                  setValue('quantity', "");
+                  setValue('unitprice', "");
+
+                  setupdate(!update)
+                 
+                  setid("")
    }
 
 
+   const deletinventory = async (id) => {
 
+
+      const url = `${deleteinventory}/${id}`
+
+      try {
+         axios.delete(url, {
+            headers: { Authorization: `Bearer ${acess_token}` }
+         })
+            .then(response => {
+               console.log(response)
+               setReloadData(!reloadData)
+               seterror("")
+            })
+            .catch(error => {
+               console.log("error", error)
+               seterror(error.response.data.message)
+            }).finally(() => {
+               fetchdata()
+
+            })
+      } catch (error) {
+         console.log("error", error)
+         seterror(error.message)
+      }
+
+
+   }
+
+   const updateinventry = async (data) => {
+
+      setValue('productname', data.productname);
+      setValue('productid', data.productid);
+      setValue('minstock', data.minstock);
+      setValue('quantity', data.quantity);
+      setValue('unitprice', data.unitprice);
+
+      setupdate(!update)
+      setcardvisible(!cardvisible)
+      setid(data._id)
+
+   }
 
    return (
       <div>
          {loading ? (
             <div>
-               <h1 className="text-center">Loading...</h1>
+               <h1 className="text-center p-2 ">Loading...</h1>
             </div>
          ) : (
             <div>
-               {parties.length == 0 ? (
+               <h1 className="text-center p-2 text-red-600">{error}</h1>
+               {inventory.length == 0 ? (
                   <div>
                      <div className="w-full">
+
+
                         <div className={` ${cardvisible ? 'hidden' : 'visible'} flex flex-col justify-center text-center items-center align-middle content-center mt-24 `}>
                            <h1 className=" text-justify text-gray-700 text-2xl font-bold">Nothing To Show</h1>
                            <p className=" text-justify text-gray-500 text-base mb-2">Add Your first product here </p>
@@ -222,6 +328,7 @@ export default function Inventory() {
 
                   <div>
                      <div className="w-full">
+
                         <div className={` ${cardvisible ? 'visible' : 'hidden'}  flex flex-col w-fit h-min  mt-14 border border-solid border-gray-400   bg-white shadow-lg rounded mx-auto  p-5`} >
 
                            <div className="flex flex-row items-center justify-between">
@@ -316,7 +423,7 @@ export default function Inventory() {
                                        <p className="text-justify text-gray-900 text-base font-semibold">Total Inventory Quantity</p>
 
 
-                                       <p className="text-justify text-gray-900 text-base font-semibold">{`Rs.${inventoryquantity}`}</p>
+                                       <p className="text-justify text-gray-900 text-base font-semibold">{`${inventoryquantity}`}</p>
                                     </div>
 
 
@@ -359,17 +466,40 @@ export default function Inventory() {
                                              <th className="px-2 py-2 w-1/5 text-start">Product Serial No</th>
                                              <th className="px-2 py-2 w-1/5 text-start">Quantity</th>
                                              <th className="px-2 py-2 w-1/5 text-start">Unit Price</th>
+                                             <th className="px-2 py-2 w-1/5 text-start">Action</th>
 
                                           </tr>
                                        </thead>
                                        <tbody>
-                                          {parties.map((data, index) => (
+                                          {inventory.map((data, index) => (
                                              <tr key={data._id}>
                                                 <td className="px-2 py-2 w-1/5 text-start">{index}</td>
                                                 <td className="px-2 py-2 w-1/5 text-start">{data.productname}</td>
                                                 <td className="px-2 py-2 w-1/5 text-start">{data.productid}</td>
                                                 <td className="px-2 py-2 w-1/5 text-start">{data.quantity}</td>
                                                 <td className="px-2 py-2 w-1/5 text-start">{data.unitprice}</td>
+                                                <td className={`px-4 py-2 w-1/5 text-start`}>
+
+                                                   <div className="flex flex-row flex-wrap space-x-1">
+
+                                                      <div onClick={() => updateinventry(data)}>
+                                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+                                                         </svg>
+                                                      </div>
+
+                                                      <div onClick={() => deletinventory(data._id)}>
+                                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                                         </svg>
+
+                                                      </div>
+                                                   </div>
+
+
+
+
+                                                </td>
 
 
 

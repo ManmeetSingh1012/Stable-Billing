@@ -137,11 +137,14 @@ const deleteSale = async (req,res,next) => {
    }
  }
 
+
 const updateSale = async (req,res,next) => {
 
    try{
 
       const doc_id = req.params.id;
+
+      console.log("id",doc_id)
 
       const findSale = await Sale.findById(doc_id);
 
@@ -156,7 +159,7 @@ const updateSale = async (req,res,next) => {
 
       const {productname, productid, totalprice, quantity, towhom, paymentstatus} = req.body;
 
-      const updatepurchase = await Purchase.findByIdAndUpdate(doc_id,{
+      const updatesales = await Sale.findByIdAndUpdate(doc_id,{
          $set: {
          productname,
          productid,
@@ -166,12 +169,12 @@ const updateSale = async (req,res,next) => {
          paymentstatus}
       },{new : true})
 
-      if(updateSale)
+      if(updatesales)
       {
          res.status(200).json({
             message : "sale updated successfully",
             success : true,
-            data : updateSale
+            data : updatesales
          })
       }else{
          res.status(400).json({

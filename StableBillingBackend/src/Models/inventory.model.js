@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 
+
 const inventory = new mongoose.Schema({
 
    productname:{
@@ -9,12 +10,14 @@ const inventory = new mongoose.Schema({
          required:true
    },
 
+   
    quantity:{
 
       type:Number,
          required:true
    }
    ,
+   
 
    productid:{
       type:String,
@@ -29,6 +32,7 @@ const inventory = new mongoose.Schema({
 
    }
 
+   
    ,
    minstock:{
 

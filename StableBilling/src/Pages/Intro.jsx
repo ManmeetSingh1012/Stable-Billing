@@ -3,13 +3,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link , Navigate, useNavigate } from 'react-router-dom';
 import toast , { Toaster } from 'react-hot-toast';
 
-import { useSelector } from 'react-redux';
+
+import { setLogin } from '../features/dataslice';
+import { useSelector , useDispatch } from 'react-redux';
 
 function Intro() {
 
-   const login = false
-   //const login = useSelector( state => state.auth.login)
-
+  
+   
    //display block will show item in column
 
    const [showMenu, setShowMenu] = useState(false);
@@ -23,9 +24,15 @@ function Intro() {
    const navigateTo = () => {
 
       
-      //login ?  navigate('/Landing') :  navigate('/SignUp');
+      status ?  navigate('/Landing') :  navigate('/SignUp');
      
    }
+
+   const token = useSelector((state) => state.auth.accessToken);
+   const status = useSelector((state) => state.auth.login)
+
+   console.log("status",status)
+   console.log("token",token)
 
 
    return (
@@ -63,9 +70,14 @@ function Intro() {
                      </li>
                      <li className="p-3 hover:text-orange-600"><a href="#">Services</a></li>
                      <li className="p-3 hover:text-orange-600"><a href="#">Contact</a></li>
-                     <li className="p-3 hover:text-orange-600">
+                     {
+                        status ? <li className="p-3 hover:text-orange-600">
+                        <Link to="/Landing">Dashboard</Link>
+                        </li> :<li className="p-3 hover:text-orange-600">
                      <Link to="/SignUp">SignUp</Link>
                      </li>
+                     }
+                     
                   </ul>
                   
                </nav>
@@ -82,7 +94,7 @@ function Intro() {
                   <div className=" text-wrap   text-center sm:text-start">
                      <h1 className=" text-gray-700 text-4xl font-bold mb-4"> StableBilling : GST Billing & Inventory Mangement Software in India for Small Businesses</h1>
                      <p className=" text-gray-500 text-sm mb-8">Manage your business professionally with StableBilling. Using the best software for your billing, inventory & accounting needs. Be a part of 1 lakh+ SMEs in India who trust StableBilling.</p>
-                     { login ? <button onClick={ 
+                     { !status ? <button onClick={ 
                         navigateTo
                      } className="bg-orange-500 text-white px-6 py-3 rounded-lg  hover:bg-orange-600 transition-colors duration-300">{"Join Stable Billing >"} </button>
                    : <button onClick={ 

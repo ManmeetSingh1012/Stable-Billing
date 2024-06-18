@@ -20,13 +20,14 @@ import Parties from './Pages/SubPages-Landing/Parties.jsx'
 
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 
-import store from './app/store.js'
+import { store, persistor } from './app/store.js'
 import { Provider } from 'react-redux'
 import Feedback from './Pages/SubPages-Landing/feedback.jsx'
 import Profile from './Pages/SubPages-Landing/profile.jsx'
 import Pricing from './Pages/SubPages-Landing/Pricing.jsx'
 import Documentation from './Pages/SubPages-Landing/documentation.jsx'
 import Bill from './Components/bill.component.jsx'
+import { PersistGate } from 'redux-persist/integration/react'
 
 const router = createBrowserRouter([
   {
@@ -62,7 +63,7 @@ const router = createBrowserRouter([
 
           { path: "/Landing/QuickBilling", element: <QuickBilling /> },
 
-          {path : "/Landing/QuickBilling/:id", element : <Bill/>},
+          { path: "/Landing/QuickBilling/:id", element: <Bill /> },
 
           { path: "/Landing/Inventory", element: <Inventory /> },
 
@@ -72,7 +73,9 @@ const router = createBrowserRouter([
 
           { path: "/Landing/Pricing", element: <Pricing /> },
 
-          { path: "/Landing/documentation", element: <Documentation /> }
+          { path: "/Landing/documentation", element: <Documentation /> },
+
+          { path: "/Landing/expense", element: <Expense /> }
         ]
 
       }
@@ -82,11 +85,17 @@ const router = createBrowserRouter([
 ])
 ReactDOM.createRoot(document.getElementById('root')).render(
   <Provider store={store}>
-    <React.StrictMode>
-      <RouterProvider router={router}>
-        <App />
-      </RouterProvider>
-    </React.StrictMode>
+
+
+    <PersistGate persistor={persistor}>
+
+      <React.StrictMode>
+        <RouterProvider router={router}>
+          <App />
+        </RouterProvider>
+      </React.StrictMode>
+    </PersistGate>
+
   </Provider>
 
 )

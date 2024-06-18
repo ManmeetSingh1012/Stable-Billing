@@ -4,7 +4,6 @@ import { ApiError } from "../utility/ApiError.js";
 import { Register } from "../Models/register.model.js";
 
 
-
 const genratetokens = async (userId) => {
 
    try {
@@ -30,7 +29,7 @@ const genratetokens = async (userId) => {
 const signup = async (req, res, next) => {
    try {
 
-      const { username, email, password } = req.body;
+      const { username, email, password ,premium } = req.body;
 
       console.log(req.body)
 
@@ -40,7 +39,7 @@ const signup = async (req, res, next) => {
             message: "username is empty"
          })
 
-         throw new ApiError(400, "username is empty")
+         //throw new ApiError(400, "username is empty")
          return;
       }
 
@@ -50,7 +49,7 @@ const signup = async (req, res, next) => {
             message: "email is empty"
          })
 
-         throw new ApiError(400, "email is empty")
+         //throw new ApiError(400, "email is empty")
          return;
       }
 
@@ -60,30 +59,37 @@ const signup = async (req, res, next) => {
             message: "password is empty"
          })
 
-         throw new ApiError(400, "password is empty")
+         //throw new ApiError(400, "password is empty")
          return;
       }
 
 
-      const user = await User.findOne({
+      const user_name = await User.findOne({
          username: username
       })
 
-      if (user) {
-         res.json({
-            message: "this user already exists"
+      const user_email = await User.findOne({
+
+         email: email
+
+      })
+
+      if (user_name || user_email) {
+         res.status(400).json({
+            message: "this username or email already exists"
          })
 
-         console.log("username already exists", user)
+         console.log("username or email  already exists")
 
-         throw new ApiError(400, "username already exists")
+        // throw new ApiError(400, "username already exists")
          return;
       }
 
       const newuser = await User.create({
          username,
          email,
-         password
+         password,
+         premium
       })
 
       if (newuser) {
@@ -95,27 +101,30 @@ const signup = async (req, res, next) => {
 
          console.log("user created successfully", user)
 
+         
 
 
 
 
-         const options = {
+
+         /*const options = {
             httpOnly: true,
             secure: true
          }
-
+*/
          
          
          res.status(201)
-            .cookie("accessToken", acesstoken, options,{sameSite:"none"})
-            .cookie("refreshToken", refreshtoken, options,{sameSite:"none"})
+            //.cookie("accessToken", acesstoken, options,{sameSite:"none"})
+            //.cookie("refreshToken", refreshtoken, options,{sameSite:"none"})
             .json({
                success: true,
                message: "user created successfully",
                user: user
             })
 
-         console.log("user created successfully", newuser.data)
+            
+         console.log("user created successfully", user)
 
       } else {
          res.json({
@@ -124,7 +133,7 @@ const signup = async (req, res, next) => {
             error: newuser
          })
 
-         throw new ApiError(400, "user not created-something went wrong")
+         //throw new ApiError(400, "user not created-something went wrong")
       }
 
 
@@ -155,7 +164,7 @@ const registerbusiness = async (req, res) => {
             message: "businessname is empty"
          })
 
-         throw new ApiError(400, "businessname is empty")
+         
          return;
       }
 
@@ -165,7 +174,7 @@ const registerbusiness = async (req, res) => {
             message: "businesstype is empty"
          })
 
-         throw new ApiError(400, "businesstype is empty")
+         
          return;
       }
 
@@ -175,9 +184,10 @@ const registerbusiness = async (req, res) => {
             message: "gstno is empty"
          })
 
-         throw new ApiError(400, "gstno is empty")
+         
          return;
       }
+
 
       else if (phoneno == "") {
          res.status(400).json({
@@ -185,7 +195,7 @@ const registerbusiness = async (req, res) => {
             message: "phoneno is empty"
          })
 
-         throw new ApiError(400, "phoneno is empty")
+        
          return;
       }
 
@@ -195,7 +205,7 @@ const registerbusiness = async (req, res) => {
             message: "address is empty"
          })
 
-         throw new ApiError(400, "address is empty")
+        
          return;
       }
 
@@ -213,59 +223,23 @@ const registerbusiness = async (req, res) => {
 
       if (register) {
 
-         /*const user = await User.findByIdAndUpdate(
-            userid, 
-            { $set:{
-               business: register._id
-            } }, 
-
-            { new: true })
-
-         try{
-            const user = await User.findByIdAndUpdate(userid, { business: register._id }, { new: true })
-
-            user.aggregate().lookup({
-
-               from :"registers",
-               localField : "business",
-               foreignField :"_id",
-               as : "registerbusiness"
-   
-            }).then((data)=>{
-   
-               console.log("data",data)
-   
-            }).catch((error)=>{
-               console.log("error",error)
-            })
-
-
-         }catch(error)
-         {
-            throw new ApiError(500, "business not created-something went wrong",error)
-         }*/
-
-
-
-
-
+      
          res.status(201)
             .json({
                success: true,
                message: "Business successfully Registered",
                user: register
             })
-
-         console.log("user created successfully", newuser.data)
+         
 
       } else {
          res.status(400).json({
             success: false,
             message: "Business  not created-something went wrong",
-            error: newuser
+            
          })
 
-         throw new ApiError(400, "Business not created-something went wrong")
+         
       }
    }
    catch (error) {
@@ -294,7 +268,7 @@ const login = async (req, res, next) => {
             message: "username is empty"
          })
 
-         throw new ApiError(400, "username is empty")
+         //throw new ApiError(400, "username is empty")
          return;
       }
 
@@ -304,7 +278,7 @@ const login = async (req, res, next) => {
             message: "password is empty"
          })
 
-         throw new ApiError(400, "password is empty")
+         //throw new ApiError(400, "password is empty")
          return;
       }
 
@@ -313,10 +287,10 @@ const login = async (req, res, next) => {
       if (!user) {
          res.status(400).json({
             success: false,
-            message: "user not found or wrong username"
+            message: "invalid credentials"
          })
 
-         throw new ApiError(400, "user not found")
+         //throw new ApiError(400, "user not found")
          return;
       }
 
@@ -325,10 +299,10 @@ const login = async (req, res, next) => {
       if (!isMatch) {
          res.status(400).json({
             success: false,
-            message: "invalid credentials-password"
+            message: "invalid credentials"
          })
 
-         throw new ApiError(400, "invalid credentials")
+         //throw new ApiError(400, "invalid credentials")
          return;
       }
 
@@ -339,14 +313,14 @@ const login = async (req, res, next) => {
 
       console.log("user logged in successfully", updateduser)
 
-      const options = {
+      /*const options = {
          httpOnly: true,
          secure: true
-      }
+      }*/
 
       res.status(200)
-         .cookie("accessToken", acesstoken, options)
-         .cookie("refreshToken", refreshtoken, options)
+         /*.cookie("accessToken", acesstoken, options)
+         .cookie("refreshToken", refreshtoken, options)*/
          .json({
             success: true,
             message: "user logged in successfully",

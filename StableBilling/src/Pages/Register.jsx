@@ -2,6 +2,7 @@ import Input from "../Components/input.component";
 import { useRef, useState } from "react";
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
+import { useSelector } from "react-redux";
 import axios from "axios";
 
 export default function Register() {
@@ -15,8 +16,12 @@ export default function Register() {
    const [toogle , setoogle] = useState(false)
    const signupurl = "http://localhost:4000/api/v1/user/registerbusiness"
 
-   const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjMwOWY2NWE3MDExNjA0ODI5NjM0MDQiLCJlbWFpbCI6Im1hbm1lZXRzaW5naG5zc0BnbWFpbC5jb20iLCJ1c2VybmFtZSI6Im1hbm1lZXQiLCJpYXQiOjE3MTQ0NjI1NjYsImV4cCI6MTcxNDU0ODk2Nn0.Zhg0tzBnOQj8rBNnwN_qA-nmAXyZpjwt10shs8kIeag'
-   const config = {
+   const token = useSelector((state) => state.auth.accessToken);
+   
+   console.log("token",token)
+
+   
+    const config = {
       headers: { Authorization: `Bearer ${token}` }
   };
 
@@ -46,13 +51,13 @@ export default function Register() {
                
                 console.log("error",error)
 
-                toogling()
-                setError(error.message)
+                setoogle(!toogle)
+                setError(error.response.data.message)
             })
         }catch(error)
         {
             console.log("error",error)
-            toogling()
+            setoogle(!toogle)
             setError(error.message)
         }
         

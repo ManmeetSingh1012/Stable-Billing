@@ -13,7 +13,7 @@ const purchase = mongoose.Schema({
       required : true
    },
 
-   totalprice:{
+   unitprice:{
       type : Number,
       required : true
    },

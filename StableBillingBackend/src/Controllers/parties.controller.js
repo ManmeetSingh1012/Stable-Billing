@@ -84,7 +84,6 @@ const getparties = async (req, res) => {
             "data":{}
          })
 
-
         // throw new ApiError(400, "No parties found")
       }
 

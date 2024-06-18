@@ -3,18 +3,19 @@ import { useForm, Controller, set, Form } from 'react-hook-form'
 import Input2 from "./input.component2";
 
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 import axios from "axios";
 import React from 'react';
 
 
 
-import { acess_token, getparties_url, getinventory } from "../constant/const";
+import { getparties_url, getinventory } from "../constant/const";
 
 
-export default function BillingInfo({onCancel , onSave}) {
+export default function BillingInfo({ onCancel, onSave }) {
 
-
+   const acess_token = useSelector((state) => state.auth.accessToken);
 
 
    const [parties, setparties] = useState([])
@@ -93,7 +94,7 @@ export default function BillingInfo({onCancel , onSave}) {
          }
       }
 
-      fetchuserdata()
+      //fetchuserdata()
       fetchinventorydata()
 
       console.log("data", parties)
@@ -112,15 +113,7 @@ export default function BillingInfo({onCancel , onSave}) {
       formState: { errors },
    } = useForm({})
 
-   const onSubmit = (data) => console.log(data)
 
-   const [selectedOption, setSelectedOption] = useState("");
-   const [showOptions, setShowOptions] = useState(true);
-
-   const handleOptionClick = (option) => {
-      setSelectedOption(option);
-      setShowOptions(false);
-   }
 
    const [counter, setCounter] = useState([1]);
 
@@ -137,7 +130,7 @@ export default function BillingInfo({onCancel , onSave}) {
       }
    };
 
-   const onsave = (data) =>{
+   const onsave = (data) => {
       data.count = counter
       console.log(data)
       onSave(data)
@@ -150,7 +143,7 @@ export default function BillingInfo({onCancel , onSave}) {
 
          <div>
             <h1 className=" pl-3 text-red-600 text-md  text-center font-normal">*Disclaimer : All fields are required</h1>
-            <h1 className=" pl-3 text-red-600 text-md text-center font-normal">*Disclaimer : If product and party name is not in the list add them in there respective section</h1>
+            <h1 className=" pl-3 text-red-600 text-md text-center font-normal">*Disclaimer : If product  name is not in the list add them in Inventory section</h1>
          </div>
 
          <div>
@@ -168,24 +161,17 @@ export default function BillingInfo({onCancel , onSave}) {
                   <div className="flex flex-row justify-start align-middle content-center ml-2 mb-5 mt-5">
 
 
-                     <div className="border border-gray-400 rounded-lg w-fit ">
+                     <div className="">
 
 
 
-                        <select className="rounded-lg w-fit p-1"  {...register("partyname", {
-                           required: true
-                        })}>
-                           <option className="">{"--select Customer-->"}</option>
-                           {parties.map((party) => (
-                              <option className="" key={party.id} value={party.name}>
-                                 {party.name}
-                              </option>
-                           ))}
+                        <Input2 placeholder="Partyname" lable="Partyname" type="text" className="p-5"
+
+                           {...register("partyname", {
+                              required: true
+                           })} />
 
 
-                        </select>
-
-                        
 
                      </div>
                   </div>
@@ -227,7 +213,7 @@ export default function BillingInfo({onCancel , onSave}) {
                                     </option>
                                  ))}
 
-                                 
+
                               </select>
 
 
@@ -266,11 +252,11 @@ export default function BillingInfo({onCancel , onSave}) {
                      <div className="border border-gray-400 rounded-lg w-fit ">
 
 
-                     <input {...register(`invoiceno`, {
-                              required: true
-                           })} className="border border-gray-400 rounded-lg w-fit p-1 placeholder:text-gray-800" placeholder="Invoice No:"></input>
- 
-                        </div>
+                        <input {...register(`invoiceno`, {
+                           required: true
+                        })} className="border border-gray-400 rounded-lg w-fit p-1 placeholder:text-gray-800" placeholder="Invoice No:"></input>
+
+                     </div>
                   </div>
 
                </div>
@@ -279,14 +265,14 @@ export default function BillingInfo({onCancel , onSave}) {
                <hr class=" h-px m-2 mr-48 bg-gray-200 border-0 dark:bg-gray-300"></hr>
 
 
-<div className="flex flex-row flex-wrap">
-<button  class="w-fit p-2 m-3  text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none" type="submit">Submit</button>
-<button onClick={onCancel} class="w-fit p-2 m-3  text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none" type="button">Cancel</button>
+               <div className="flex flex-row flex-wrap">
+                  <button class="w-fit p-2 m-3  text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none" type="submit">Submit</button>
+                  <button onClick={onCancel} class="w-fit p-2 m-3  text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none" type="button">Cancel</button>
 
-            
-            
-</div>
-               </form>
+
+
+               </div>
+            </form>
 
 
 

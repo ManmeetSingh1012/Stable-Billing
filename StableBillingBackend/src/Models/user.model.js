@@ -71,6 +71,7 @@ user.methods.isPasswordCorrect = async function(password)
 user.methods.genrateAcessToken = function () {
 
  
+   
    return jwt.sign(
       {
          _id : this._id ,

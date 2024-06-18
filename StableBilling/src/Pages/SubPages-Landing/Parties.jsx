@@ -4,8 +4,8 @@ import Input2 from "../../Components/input.component2"
 import Register from "../Register"
 import axios from "axios";
 import React from 'react';
-
-import { acess_token, getparties_url, postpartes_url } from "../../constant/const";
+import { useSelector } from "react-redux";
+import { getparties_url, postpartes_url, deleteparties_url, updateparties_url } from "../../constant/const";
 
 
 export default function Parties() {
@@ -17,18 +17,21 @@ export default function Parties() {
    const [reloadData, setReloadData] = useState(false);
    const [leng, setLeng] = useState(0)
 
-   const [pay,setPay] = useState(0)
-   const [recieve,setrecieve] = useState(0)
+   const [pay, setPay] = useState(0)
+   const [recieve, setrecieve] = useState(0)
 
+   const [update, setupdate] = useState(false)
+   const [id, setid] = useState("")
 
+   const acess_token = useSelector((state) => state.auth.accessToken);
 
-   const caclculate = (data) =>{
+   const caclculate = (data) => {
       let pay = 0
       let recieve = 0
       data.map((data) => {
-         if(data.type === 'pay'){
+         if (data.type === 'pay') {
             pay = pay + data.balance
-         }else{
+         } else {
             recieve = recieve + data.balance
          }
       })
@@ -56,13 +59,14 @@ export default function Parties() {
                   //console.log("data length", parties.length)
 
                   //console.log("data", response.data.data)
-                  
+
 
                   setloading(false)
 
                }).catch(error => {
                   console.log("error", error)
                   seterror(error.message)
+                  setparties([])
                   setloading(false)
                })
 
@@ -75,42 +79,81 @@ export default function Parties() {
 
       fetchdata()
 
-      
+
 
 
    }, [reloadData])
 
 
 
-   
+
 
 
 
    const [cardvisible, setcardvisible] = useState(false)
-   const { register, handleSubmit } = useForm({  });
+   const { register, handleSubmit, setValue } = useForm({});
 
    const create = (data) => {
-      console.log("check", data);
-
-      data.balance = Number(data.balance)
 
 
-      setcardvisible(!cardvisible)
-      try {
-         axios.post(postpartes_url, data, {
-            headers: { Authorization: `Bearer ${acess_token}` }
-         })
-            .then(response => {
-               //console.log(response)
-               setReloadData(!reloadData)
+      console.log("data", update)
+
+      if (update) {
+         setcardvisible(!cardvisible)
+
+         const url = `${updateparties_url}/${id}`
+
+         try {
+            axios.put(url, data, {
+               headers: { Authorization: `Bearer ${acess_token}` }
             })
-            .catch(error => {
-               console.log("error", error)
-               seterror(error.message)
+               .then(response => {
+                  console.log(response)
+                  setReloadData(!reloadData)
+                  seterror("")
+               })
+               .catch(error => {
+                  console.log("error", error)
+                  seterror(error.response.data.message)
+               }).finally(() => {
+                  setValue('name', "");
+                  setValue('contact', "");
+                  setValue('email', "");
+                  setValue('type', "");
+                  setValue('balance',"");
+                  setupdate(!update)
+
+                  setid("")
+
+               })
+         } catch (error) {
+            console.log("error", error)
+            seterror(error.message)
+         }
+
+      } else {
+         console.log("check", data);
+
+         data.balance = Number(data.balance)
+
+
+         setcardvisible(!cardvisible)
+         try {
+            axios.post(postpartes_url, data, {
+               headers: { Authorization: `Bearer ${acess_token}` }
             })
-      } catch (error) {
-         console.log("error", error)
-         seterror(error.message)
+               .then(response => {
+                  //console.log(response)
+                  setReloadData(!reloadData)
+               })
+               .catch(error => {
+                  console.log("error", error)
+                  seterror(error.message)
+               })
+         } catch (error) {
+            console.log("error", error)
+            seterror(error.message)
+         }
       }
    }
 
@@ -118,9 +161,64 @@ export default function Parties() {
       setcardvisible(!cardvisible)
       console.log(cardvisible)
       //alert("button clicked")
+      setValue('name', "");
+                  setValue('contact', "");
+                  setValue('email', "");
+                  setValue('type', "");
+                  setValue('balance',"");
+                  setupdate(!update)
+
+                  setid("")
    }
 
 
+
+   const deleteparty = async (id) => {
+
+
+      const url = `${deleteparties_url}/${id}`
+
+      try {
+         axios.delete(url, {
+            headers: { Authorization: `Bearer ${acess_token}` }
+         })
+            .then(response => {
+               console.log(response)
+               setReloadData(!reloadData)
+               seterror("")
+            })
+            .catch(error => {
+               console.log("error", error)
+               seterror(error.response.data.message)
+            })
+      } catch (error) {
+         console.log("error", error)
+         seterror(error.message)
+      }
+
+   }
+
+
+   const partyupdate = async (data) => {
+
+
+      /**/
+
+
+
+      // togglecard()
+      setValue('name', data.name);
+      setValue('contact', data.contact);
+      setValue('email', data.email);
+      setValue('type', data.type);
+      setValue('balance', data.balance);
+      setupdate(!update)
+      setcardvisible(!cardvisible)
+      setid(data._id)
+      console.log("data", data._id)
+
+
+   }
 
 
    return (
@@ -192,7 +290,7 @@ export default function Parties() {
                                     <div className="relative p-5  content-center">
                                        <input
                                           {...register("type", {
-                                             
+
                                           })}
                                           type="radio"
                                           value="pay"
@@ -206,7 +304,7 @@ export default function Parties() {
                                     <div className="relative p-5  content-center ">
                                        <input
                                           {...register("type", {
-                                            
+
                                           })}
                                           type="radio"
                                           value="recieve"
@@ -233,7 +331,7 @@ export default function Parties() {
 
                   <div>
                      <div className="w-full">
-                        <div className={` ${cardvisible ? 'visible' : 'hidden'}  flex w-fit h-min  mt-14 border border-solid border-gray-400   bg-white shadow-lg rounded mx-auto  p-5`} >
+                        <div className={` ${cardvisible ? 'visible' : 'hidden'}  flex flex-col w-fit h-min  mt-14 border border-solid border-gray-400   bg-white shadow-lg rounded mx-auto  p-5`} >
 
                            <div className="flex flex-row items-center justify-between">
 
@@ -248,75 +346,74 @@ export default function Parties() {
 
 
 
-                           <form className='content-center' onSubmit={handleSubmit(create)}>
 
-                              <div className="flex flex-row flex-wrap ">
-                                 <Input2 placeholder="*Party Name" lable="Party Name" type="text" className="p-5"
+                           <div>
+                              <form className='content-center' onSubmit={handleSubmit(create)}>
 
-                                    {...register("name", {
+                                 <div className="flex flex-row flex-wrap ">
+                                    <Input2 placeholder="*Party Name" lable="Party Name" type="text" className="p-5"
+
+                                       {...register("name", {
+                                          required: true
+                                       })} />
+
+
+                                    <Input2 placeholder="*Party Phone" lable="Party Phone" type="number" className="p-5" {...register("contact", {
                                        required: true
                                     })} />
 
-
-                                 <Input2 placeholder="*Party Phone" lable="Party Phone" type="number" className="p-5" {...register("contact", {
-                                    required: true
-                                 })} />
-
-                              </div>
-
-
-
-                              <div className="flex flex-row flex-wrap ">
-
-                                 <Input2 placeholder="Email Id" lable="Email Id" type="text" className="p-5" {...register("email", {
-                                    required: true
-                                 })} />
-                              </div>
-
-                              <hr class=" h-px m-3 bg-gray-200 border-0 dark:bg-gray-300"></hr>
-
-                              <div className="flex flex-row flex-wrap ">
-                                 <Input2 placeholder="Opening Balance" lable="Opening Balance" type="number" className="p-5" {...register("balance", {
-                                 })} />
-
-                                 <div className="relative p-5  content-center">
-                                    <input
-                                       {...register("type", {
-                                          required: true
-                                       })}
-                                       type="radio"
-                                       value="pay"
-                                       id="pay"
-
-                                       className="size-4"
-                                    />
-                                    <label className="text-lg ml-1" htmlFor="pay">Pay</label>
                                  </div>
 
-                                 <div className="relative p-5  content-center ">
-                                    <input
-                                       {...register("type", {
-                                          required: true
-                                       })}
-                                       type="radio"
-                                       value="recieve"
-                                       id="recieve"
-                                       className="size-4"
-                                    />
-                                    <label className="text-lg ml-1" htmlFor="recieve">Recieve</label>
+
+
+                                 <div className="flex flex-row flex-wrap ">
+
+                                    <Input2 placeholder="Email Id" lable="Email Id" type="text" className="p-5" {...register("email", {
+                                       required: true
+                                    })} />
                                  </div>
 
-                              </div>
+                                 <hr class=" h-px m-3 bg-gray-200 border-0 dark:bg-gray-300"></hr>
 
-                              <div className="flex flex-row flex-wrap w-full">
-                                 <button type="submit" className="bg-orange-500 text-white px-4 mx-5 py-2 rounded-lg  hover:bg-orange-600 transition-colors duration-300">{"Save"} </button>
-                              </div>
-                           </form>
+                                 <div className="flex flex-row flex-wrap ">
+                                    <Input2 placeholder="Opening Balance" lable="Opening Balance" type="number" className="p-5" {...register("balance", {
+                                    })} />
 
+                                    <div className="relative p-5  content-center">
+                                       <input
+                                          {...register("type", {
 
+                                          })}
+                                          type="radio"
+                                          value="pay"
+                                          id="pay"
 
+                                          className="size-4"
+                                       />
+                                       <label className="text-lg ml-1" htmlFor="pay">Pay</label>
+                                    </div>
 
+                                    <div className="relative p-5  content-center ">
+                                       <input
+                                          {...register("type", {
 
+                                          })}
+                                          type="radio"
+                                          value="recieve"
+                                          id="recieve"
+                                          className="size-4"
+                                       />
+                                       <label className="text-lg ml-1" htmlFor="recieve">Recieve</label>
+                                    </div>
+
+                                 </div>
+
+                                 <div className="flex flex-row flex-wrap w-full">
+                                    <button type="submit" className="bg-orange-500 text-white px-4 mx-5 py-2 rounded-lg  hover:bg-orange-600 transition-colors duration-300">{"Save"} </button>
+                                 </div>
+                              </form>
+
+                           </div>
                         </div>
 
 
@@ -334,7 +431,7 @@ export default function Parties() {
 
                                        <p className="text-justify text-gray-900 text-base font-semibold">To Pay</p>
 
-                                       
+
                                        <p className="text-justify text-gray-900 text-base font-semibold">{`Rs.${pay}`}</p>
                                     </div>
 
@@ -382,6 +479,7 @@ export default function Parties() {
                                              <th className="px-4 py-2 w-1/5 text-start">Party Balance</th>
 
                                              <th className="px-4 py-2 w-1/5 text-start">Type</th>
+                                             <th className="px-4 py-2 w-1/5 text-start">Action</th>
                                           </tr>
                                        </thead>
                                        <tbody>
@@ -397,6 +495,29 @@ export default function Parties() {
                                                 </td>
                                                 <td className={`px-4 py-2 w-1/5 text-start ${data.type === 'recieve' ? 'text-green-500' : 'text-red-500'}`}>
                                                    {data.type}
+                                                </td>
+
+                                                <td className={`px-4 py-2 w-1/5 text-start`}>
+
+                                                   <div className="flex flex-row flex-wrap space-x-1">
+
+                                                      <div onClick={() => partyupdate(data)}>
+                                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+                                                         </svg>
+                                                      </div>
+
+                                                      <div onClick={() => deleteparty(data._id)}>
+                                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                                         </svg>
+
+                                                      </div>
+                                                   </div>
+
+
+
+
                                                 </td>
                                              </tr>
                                           ))}

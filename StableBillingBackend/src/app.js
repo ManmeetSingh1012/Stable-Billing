@@ -34,7 +34,8 @@ import userrouter from "./Routes/user.route.js";
 import inventory from "./Routes/inventory.route.js";
 import sales from "./Routes/sales.route.js";
 import purchase from "./Routes/purchase.route.js";
-import parties from "./Routes/parties.route.js";
+import parties from "./Routes/parties.route.js"
+import expense from "./Routes/expense.route.js";
 
 app.use("/api/v1", router)
 app.use("/api/v1/user",userrouter)
@@ -43,6 +44,7 @@ app.use("/api/v1/inventory",inventory)
 app.use("/api/v1/parties",parties)
 app.use("/api/v1/sale",sales)
 app.use("/api/v1/purchase",purchase)
+app.use("/api/v1/expense",expense)
 
 
 

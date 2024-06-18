@@ -1,24 +1,25 @@
 import Input from "../Components/input.component";
 import { useRef, useState } from "react";
-import { useForm } from 'react-hook-form'
+import { set, useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from "axios";
+import { setLogin } from "../features/dataslice";
+import {  useDispatch } from "react-redux";
+
 
 export default function SignIn() {
 
 
     const [error, setError] = useState("")
     const navigate = useNavigate()
+    const dispatch = useDispatch()
     // register will be passed as props to the input component and it will be used to register the input field with the hook form.
     const { register, handleSubmit } = useForm();
 
     const [toogle , setoogle] = useState(false)
    const signupurl = "http://localhost:4000/api/v1/user/login"
 
-   const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjMwOWY2NWE3MDExNjA0ODI5NjM0MDQiLCJlbWFpbCI6Im1hbm1lZXRzaW5naG5zc0BnbWFpbC5jb20iLCJ1c2VybmFtZSI6Im1hbm1lZXQiLCJpYXQiOjE3MTQ0NjI1NjYsImV4cCI6MTcxNDU0ODk2Nn0.Zhg0tzBnOQj8rBNnwN_qA-nmAXyZpjwt10shs8kIeag'
-   const config = {
-      headers: { Authorization: `Bearer ${token}` }
-  };
+   
 
     const toogling = ()=>{
         setoogle(!toogle)
@@ -34,29 +35,37 @@ export default function SignIn() {
 
         
         try{
-            axios.post(signupurl, data,
-               config)
+            axios.post(signupurl, data
+               )
             .then(response => {
 
                 setoogle(!toogle)
-                console.log(response)
+                console.log(response.data.user.acessToken)
+                dispatch(setLogin(response.data.user.acessToken))
+                
                 navigate('/Landing')
             })
             .catch(error => {
                
                 console.log("error",error)
 
-                toogling()
-                setError(error.message)
+                
+                if(error.response.data.message)
+                {
+                    setError(error.response.data.message)
+                }else{
+                    setError(error.message)
+                }
+                //setError(error.response.data.message)
             })
         }catch(error)
         {
             console.log("error",error)
-            toogling()
+            //toogling()
             setError(error.message)
         }
         
-
+toogling()
         
 
     }
@@ -69,7 +78,7 @@ export default function SignIn() {
 
             <div class="mb-16 flex justify-between">
                 <span class="font-bold"><span class="inline-block h-3 w-3 bg-orange-600"></span> StableBilling</span>
-                <span class="">Dont Have account? <a href="#" class="font-medium text-orange-600 hover:underline">Sign Up</a></span>
+                <span class="">Dont Have account? <Link to="/SignUp" class="font-medium text-orange-600 hover:underline">Sign Up </Link></span>
             </div>
 
             <p class="mb-5 text-3xl font-medium">SignIn</p>

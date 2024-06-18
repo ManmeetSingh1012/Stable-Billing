@@ -6,9 +6,9 @@ const addpurchase = async (req,res,next) => {
 
    try{
        
-      const {productname, productid, totalprice, quantity, withwhom, paymentstatus} = req.body;
+      const {productname, productid, unitprice, quantity, withwhom, paymentstatus} = req.body;
 
-      if(productname  =="" || productid == "" || totalprice =="" || quantity == "" || withwhom == "" || paymentstatus == "")
+      if(productname  =="" || productid == "" || unitprice =="" || quantity == "" || withwhom == "" || paymentstatus == "")
       {
          res.status(400).json({
             message : "Please provide all fields",
@@ -20,7 +20,7 @@ const addpurchase = async (req,res,next) => {
       const newpurchase = await  Purchase.create({
          productname,
          productid,
-         totalprice,
+        unitprice,
          quantity,
          withwhom,
          paymentstatus,
@@ -155,14 +155,15 @@ const updatepurchase = async (req,res,next) => {
          })
          return;
       }
+      
 
-      const {productname, productid, totalprice, quantity, withwhom, paymentstatus} = req.body;
+      const {productname, productid, unitprice, quantity, withwhom, paymentstatus} = req.body;
 
       const updatepurchase = await Purchase.findByIdAndUpdate(doc_id,{
          $set: {
          productname,
          productid,
-         totalprice,
+         unitprice,
          quantity,
          withwhom,
          paymentstatus
