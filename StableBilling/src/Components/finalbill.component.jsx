@@ -2,6 +2,8 @@ import React, { useEffect, useState  } from 'react'
 import axios from "axios";
 import { useSelector } from 'react-redux';
 import { getinventory } from '../constant/const'
+
+
 export default function FinalBill({ data }) {
 
    const acess_token = useSelector((state) => state.auth.accessToken);

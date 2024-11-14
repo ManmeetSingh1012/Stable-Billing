@@ -231,7 +231,7 @@ export default function Purchase() {
       setcardvisible(!cardvisible)
       console.log(cardvisible)
       //alert("button clicked")
-      setupdate(!update)
+      //setupdate(!update)
                   setValue('productname', "");
                   setValue('towhom', "");
                   setValue('paymentstatus', "");
@@ -311,7 +311,7 @@ export default function Purchase() {
                         <div className={` ${cardvisible ? 'hidden' : 'visible'} flex flex-col justify-center text-center items-center align-middle content-center mt-24 `}>
                            <h1 className=" text-justify text-gray-700 text-2xl font-bold">Nothing To Show</h1>
                            <p className=" text-justify text-gray-500 text-base mb-2">Manage Your Sales Here</p>
-                           <button onClick={togglecard} className="bg-orange-500 text-white px-4 py-2 rounded-lg  hover:bg-orange-600 transition-colors duration-300">{"Add Your 1st Parties >"} </button>
+                           <button onClick={togglecard} className="bg-orange-500 text-white px-4 py-2 rounded-lg  hover:bg-orange-600 transition-colors duration-300">{"Add Your 1st Sale >"} </button>
                         </div>
 
 

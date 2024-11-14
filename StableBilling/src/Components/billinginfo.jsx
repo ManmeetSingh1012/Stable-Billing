@@ -165,9 +165,24 @@ export default function BillingInfo({ onCancel, onSave }) {
 
 
 
-                        <Input2 placeholder="Partyname" lable="Partyname" type="text" className="p-5"
+                        <Input2 placeholder="PartyName" lable="PartyName" type="text" className="p-5"
 
                            {...register("partyname", {
+                              required: true
+                           })} />
+
+
+
+                     </div>
+
+
+                     <div className="">
+
+
+
+                        <Input2 placeholder="PartyEmail" lable="PartyEmail" type="email" className="p-5"
+
+                           {...register("partyemail", {
                               required: true
                            })} />
 

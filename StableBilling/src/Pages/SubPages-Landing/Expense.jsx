@@ -178,7 +178,7 @@ export default function Expense() {
       console.log(cardvisible)
       //alert("button clicked")
 
-      setupdate(!update)
+      //setupdate(!update)
                   setValue('expensename', "");
       setValue('expenseamount', "");
       setValue('expensetype', "");
