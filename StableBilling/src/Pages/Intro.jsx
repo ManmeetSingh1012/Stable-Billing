@@ -400,7 +400,13 @@ function Intro() {
 
 
                      <div className='flex flex-row flex-wrap mx-auto w-full justify-center'>
-                        <button className="bg-orange-500 text-white mx-3 px-6 py-3 rounded-lg  hover:bg-orange-600 transition-colors duration-300">{"Signup"} </button>
+                     { !status ? <button onClick={ 
+                        navigateTo
+                     } className="bg-orange-500 text-white px-6 py-3 rounded-lg  hover:bg-orange-600 transition-colors duration-300">{"Join Stable Billing >"} </button>
+                   : <button onClick={ 
+                        navigateTo
+                     } className="bg-orange-500 text-white px-6 py-3 rounded-lg  hover:bg-orange-600 transition-colors duration-300">{"Home Page>"} </button>
+                   }
                         <button className="mx-3 border border-black text-black hover:border-0 hover:text-white px-6 py-3 rounded-lg  hover:bg-orange-500 transition-colors duration-300">{"Take Demo"} </button>
 
                      </div>

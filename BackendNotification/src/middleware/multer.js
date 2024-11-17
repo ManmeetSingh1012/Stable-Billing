@@ -1,16 +1,14 @@
 import multer from "multer";
 
-const upload = multer(
-  {
-    limits: {
-      fileSize: 10 * 1024 * 1024, // 50MB limit
-    },
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/");
   },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
 
-  { dest: "uploads/" }
-);
-
-
-const pdfmiddleware = upload.single("invoice");
+const pdfmiddleware = multer({ storage: storage }).single("invoice");
 
 export { pdfmiddleware };

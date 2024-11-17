@@ -287,14 +287,17 @@ const login = async (req, res, next) => {
       if (!user) {
          res.status(400).json({
             success: false,
-            message: "invalid credentials"
+            message: "invalid credentials username"
          })
 
          //throw new ApiError(400, "user not found")
          return;
       }
 
+      console.log("ismatch",password)
       const isMatch = await user.isPasswordCorrect(password)
+
+      console.log("ismatch2",isMatch)
 
       if (!isMatch) {
          res.status(400).json({

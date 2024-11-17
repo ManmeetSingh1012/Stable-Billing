@@ -64,6 +64,7 @@ user.pre("save", async function(next)
 
 user.methods.isPasswordCorrect = async function(password)
 {
+   console.log("ismatch3",password)
    return await bcrypt.compare(password,this.password)
 }
 
