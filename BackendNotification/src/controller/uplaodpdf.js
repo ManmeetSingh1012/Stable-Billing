@@ -1,5 +1,7 @@
 import send_mail from "../service/emailservice.js";
 import { InvoiceHistory } from "../models/inovicehistory.js";
+import { geturl, puturl } from "../service/s3.js";
+import axios from "axios";
 
 const uploadpdf = async (req, res) => {
   try {
@@ -14,11 +16,27 @@ const uploadpdf = async (req, res) => {
       });
     }
 
-    // Save invoice to the database
+    // Generate a unique filename
+    const filename = `${Date.now()}_invoice_${email}.pdf`;
+
+    // Generate a signed PUT URL
+    const putUrl = await puturl(filename);
+
+    // Upload the PDF file to S3
+    const uploadResponse = await axios.put(putUrl, pdf.buffer, {
+      headers: {
+        "Content-Type": pdf.mimetype, // Ensure the correct content type is sent
+      },
+    });
+
+    // Generate a signed GET URL for the uploaded file
+    const getUrl = await geturl(filename);
+
+    // Save the invoice details to the database
     const invoice = await InvoiceHistory.create({
       partyemail: email,
       partyname: name,
-      invoicelink: pdf.filename,
+      invoicelink: getUrl, // Save the GET URL
     });
 
     if (!invoice) {
@@ -44,7 +62,6 @@ const uploadpdf = async (req, res) => {
       }
 
       // Log successful email response
-      console.log("Email sent successfully:", response);
     }
 
     // Respond with success
@@ -64,6 +81,19 @@ const uploadpdf = async (req, res) => {
 
 const getpdfdata = async (req, res) => {
   try {
+    const invoices = await InvoiceHistory.find();
+    if (!invoices) {
+      return res.status(404).json({
+        success: false,
+        message: "No invoices found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Invoices fetched successfully",
+      invoices,
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({

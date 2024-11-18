@@ -1,13 +1,6 @@
 import multer from "multer";
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname);
-  },
-});
+const storage = multer.memoryStorage(); // Use memory storage for in-memory access
 
 const pdfmiddleware = multer({ storage: storage }).single("invoice");
 

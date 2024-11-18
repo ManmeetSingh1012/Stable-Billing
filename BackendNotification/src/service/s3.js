@@ -1,44 +1,42 @@
-const {
-  S3Client,
-  GetObjectCommand,
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import {
   PutObjectCommand,
-} = require("@aws-sdk/client-s3");
-const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+  GetObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3";
 
-// create S3 client
 const s3client = new S3Client({
   region: "ap-south-1",
+  credentials: {},
 });
-// you can add expiry time as well
-// const url = await getSignedUrl(s3client, command, { expiresIn: 3600 });
 
-const putobject = async (Key) => {
+const putobject = async (Key, ContentType) => {
   const command = new PutObjectCommand({
     Bucket: "tempbucketawss3",
     Key: Key,
+    ContentType: ContentType,
   });
 
-  const url = await getSignedUrl(s3client, command);
-  return url;
+  return await getSignedUrl(s3client, command, { expiresIn: 3600 });
 };
 
-const getUrl = async (Key) => {
-  console.log(Key);
+const getobject = async (Key) => {
   const command = new GetObjectCommand({
     Bucket: "tempbucketawss3",
-    Key: Key, // key should be capital
+    Key: Key,
+    ResponseContentDisposition: "inline", // Ensure inline viewing
+    ResponseContentType: "application/pdf", // Inform browser it's a PDF
   });
-  const url = await getSignedUrl(s3client, command, { expiresIn: 300 });
 
-  return url;
+  return await getSignedUrl(s3client, command, { expiresIn: 3600 });
 };
 
-const getinit = async () => {
-  //console.log("url", await getUrl("Screenshot (264).png")); // file name
-  console.log(
-    "url put wali",
-    await putobject(`image-${Date.now()}.jpg`, "image/jpg")
-  ); // file name
+const puturl = async (key) => {
+  return await putobject(key, "application/pdf");
 };
 
-getinit();
+const geturl = async (key) => {
+  return await getobject(key);
+};
+
+export { puturl, geturl };
