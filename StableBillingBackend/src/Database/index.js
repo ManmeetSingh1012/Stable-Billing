@@ -12,6 +12,7 @@ const ConnectDB = () => {
          resolve();
       }catch(error){
          const errors = new ApiError(500, "Database Connection Error", error);
+         console.log(errors);
          reject(error);
       }
 
