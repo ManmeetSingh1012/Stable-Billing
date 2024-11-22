@@ -1,4 +1,4 @@
-import { ApiError } from "../utility/ApiError.js";
+import { ApiError } from "../Utility/ApiError.js";
 import { Purchase } from "../Models/purchase.model.js";
 
 

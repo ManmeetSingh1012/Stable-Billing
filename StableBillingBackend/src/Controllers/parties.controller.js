@@ -1,6 +1,6 @@
 
 import { Parties } from "../Models/parties.model.js"
-import { ApiError } from "../utility/ApiError.js"
+import { ApiError } from "../Utility/ApiError.js"
 
 const updateparties = async (req, res) => {
 

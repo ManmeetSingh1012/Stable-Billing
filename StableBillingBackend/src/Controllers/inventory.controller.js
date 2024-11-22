@@ -1,5 +1,5 @@
 import { Inventory } from "../Models/inventory.model.js"
-import { ApiError } from "../utility/ApiError.js"
+import { ApiError } from "../Utility/ApiError.js"
 
 const update = async (req,res) => {
 

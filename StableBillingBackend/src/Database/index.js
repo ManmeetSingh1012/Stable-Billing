@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { DB_NAME } from "../constant.js";
+import {ApiError} from "../Utility/ApiError.js";
 
 
 
@@ -11,7 +11,7 @@ const ConnectDB = () => {
          console.log('Connected to DB', connectionInstance.connection.host);
          resolve();
       }catch(error){
-         //const errors = new ApiError(500, "Database Connection Error", error);
+         const errors = new ApiError(500, "Database Connection Error", error);
          reject(error);
       }
 

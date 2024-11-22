@@ -1,5 +1,5 @@
 import { Expense } from "../Models/expense.model.js"
-
+import { ApiError } from "../Utility/ApiError.js";
 const add  = async (req,res)=>{
 
    try{

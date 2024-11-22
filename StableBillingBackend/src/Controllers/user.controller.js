@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { User } from "../Models/user.model.js";
-import { ApiError } from "../utility/ApiError.js";
+import { ApiError } from "../Utility/ApiError.js";
 import { Register } from "../Models/register.model.js";
 
 
