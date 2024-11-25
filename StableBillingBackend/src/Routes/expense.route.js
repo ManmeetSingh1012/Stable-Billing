@@ -5,10 +5,10 @@ import { add ,update , deletexpense , get } from "../Controllers/expense.control
 
 
 const expense = Router();
-
-expense.route('/addexpense').post(verifyJWT,add)
-expense.route('/updatexpense/:id').put(verifyJWT,update)
-expense.route('/deletexpense/:id').delete(verifyJWT,deletexpense)
-expense.route('/getexpense').get(verifyJWT,get)
+expense.use(verifyJWT)
+expense.route('/addexpense').post(add)
+expense.route('/updatexpense/:id').put(update)
+expense.route('/deletexpense/:id').delete(deletexpense)
+expense.route('/getexpense').get(get)
 
 export default expense;

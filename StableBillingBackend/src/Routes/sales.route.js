@@ -5,11 +5,11 @@ import { addSale, updateSale, deleteSale,getSale } from "../Controllers/sale.con
 
 const sales = Router();
 
-
-sales.route("/addsale").post(verifyJWT,addSale)
-sales.route("/getsale").get(verifyJWT,getSale)
-sales.route("/deletesale/:id").delete(verifyJWT,deleteSale)
-sales.route("/updatesale/:id").put(verifyJWT,updateSale)
+sales.use(verifyJWT)
+sales.route("/addsale").post(addSale)
+sales.route("/getsale").get(getSale)
+sales.route("/deletesale/:id").delete(deleteSale)
+sales.route("/updatesale/:id").put(updateSale)
 
 
 export default sales;

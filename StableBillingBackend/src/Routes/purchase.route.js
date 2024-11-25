@@ -6,11 +6,11 @@ import { addpurchase, deletepurchase, getpurchase, updatepurchase } from "../Con
 
 
 const purchase = Router();
-
-purchase.route("/addpurchase").post(verifyJWT,addpurchase)
-purchase.route("/getpurchase").get(verifyJWT,getpurchase)
-purchase.route("/deletepurchase/:id").delete(verifyJWT,deletepurchase)
-purchase.route("/updatepurchase/:id").put(verifyJWT,updatepurchase)
+purchase.use(verifyJWT)
+purchase.route("/addpurchase").post(addpurchase)
+purchase.route("/getpurchase").get(getpurchase)
+purchase.route("/deletepurchase/:id").delete(deletepurchase)
+purchase.route("/updatepurchase/:id").put(updatepurchase)
 
 
 

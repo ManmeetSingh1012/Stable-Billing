@@ -6,11 +6,11 @@ import { addparties , getparties, updateparties , deleteparties } from "../Contr
 
 
 const parties = Router();
-
-parties.route("/addparties").post(verifyJWT,addparties)
-parties.route("/getparties").get(verifyJWT,getparties)
-parties.route("/updateparties/:id").put(verifyJWT,updateparties)
-parties.route("/deleteparties/:id").delete(verifyJWT,deleteparties)
+parties.use(verifyJWT)
+parties.route("/addparties").post(addparties)
+parties.route("/getparties").get(getparties)
+parties.route("/updateparties/:id").put(updateparties)
+parties.route("/deleteparties/:id").delete(deleteparties)
 
 
 

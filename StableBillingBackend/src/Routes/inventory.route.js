@@ -5,11 +5,11 @@ import { add ,get , deletedata, update , updatequantity} from "../Controllers/in
 
 
 const inventory = Router();
-
-inventory.route('/addinventory').post(verifyJWT,add)
-inventory.route('/updateinventory/:id').put(verifyJWT,update)
-inventory.route('/updateinventoryqty/:id').put(verifyJWT,updatequantity)
-inventory.route('/deleteinventory/:id').delete(verifyJWT,deletedata)
-inventory.route('/getinventory').get(verifyJWT,get)
+inventory.use(verifyJWT)
+inventory.route('/addinventory').post(add)
+inventory.route('/updateinventory/:id').put(update)
+inventory.route('/updateinventoryqty/:id').put(updatequantity)
+inventory.route('/deleteinventory/:id').delete(deletedata)
+inventory.route('/getinventory').get(get)
 
 export default inventory;
