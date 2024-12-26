@@ -19,24 +19,24 @@ const uploadpdf = async (req, res) => {
     // Generate a unique filename
     const filename = `${Date.now()}_invoice_${email}.pdf`;
 
-    // Generate a signed PUT URL
-    const putUrl = await puturl(filename);
+    // // Generate a signed PUT URL
+    // const putUrl = `await puturl(filename)`;
 
-    // Upload the PDF file to S3
-    const uploadResponse = await axios.put(putUrl, pdf.buffer, {
-      headers: {
-        "Content-Type": pdf.mimetype, // Ensure the correct content type is sent
-      },
-    });
+    // // Upload the PDF file to S3
+    // const uploadResponse = await axios.put(putUrl, pdf.buffer, {
+    //   headers: {
+    //     "Content-Type": pdf.mimetype, // Ensure the correct content type is sent
+    //   },
+    // });
 
     // Generate a signed GET URL for the uploaded file
-    const getUrl = await geturl(filename);
+    //const getUrl = await geturl(filename);
 
     // Save the invoice details to the database
     const invoice = await InvoiceHistory.create({
       partyemail: email,
       partyname: name,
-      invoicelink: getUrl, // Save the GET URL
+      invoicelink: filename, // Save the GET URL
     });
 
     if (!invoice) {

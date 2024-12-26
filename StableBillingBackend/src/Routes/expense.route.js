@@ -1,14 +1,24 @@
 import { Router } from "express";
-
-import { verifyJWT } from "../Middlewares/auth.middleware.js";
-import { add ,update , deletexpense , get } from "../Controllers/expense.controller.js";
-
+import { verifyJWT } from "../Middlewares/verifyToken.middleware.js";
+import {
+	add,
+	update,
+	deletexpense,
+	get,
+} from "../Controllers/expense.controller.js";
 
 const expense = Router();
 
-expense.route('/addexpense').post(verifyJWT,add)
-expense.route('/updatexpense/:id').put(verifyJWT,update)
-expense.route('/deletexpense/:id').delete(verifyJWT,deletexpense)
-expense.route('/getexpense').get(verifyJWT,get)
+expense.use(verifyJWT);
+
+expense
+	.route("/")
+	.post(add) // Create expense
+	.get(get); // Get all expenses
+
+expense
+	.route("/:id")
+	.put(update) // Update an expense
+	.delete(deletexpense); // Delete an expense
 
 export default expense;

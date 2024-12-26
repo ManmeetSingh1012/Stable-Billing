@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { axiosInstance } from "../service/axiosInterceptor";
 
 export default function Register() {
   const [error, setError] = useState("");
@@ -12,15 +13,15 @@ export default function Register() {
   const { register, handleSubmit } = useForm();
 
   const [toogle, setoogle] = useState(false);
-  const signupurl = "http://localhost:4000/api/v1/user/registerbusiness";
+  const signupurl = "/api/v1/user/registerbusiness";
 
-  const token = useSelector((state) => state.auth.accessToken);
+  // const token = useSelector((state) => state.auth.accessToken);
 
-  console.log("token", token);
+  // console.log("token", token);
 
-  const config = {
-    headers: { Authorization: `Bearer ${token}` },
-  };
+  // const config = {
+  //   headers: { Authorization: `Bearer ${token}` },
+  // };
 
   const toogling = () => {
     setoogle(!toogle);
@@ -32,8 +33,8 @@ export default function Register() {
     setError("");
 
     try {
-      axios
-        .post(signupurl, data, config)
+      axiosInstance
+        .post(signupurl, data)
         .then((response) => {
           setoogle(!toogle);
           console.log(response);

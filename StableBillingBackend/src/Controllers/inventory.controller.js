@@ -1,238 +1,208 @@
-import { Inventory } from "../Models/inventory.model.js"
-import { ApiError } from "../utility/ApiError.js"
+import { Inventory } from "../Models/inventory.model.js";
+import { ApiError } from "../utility/ApiError.js";
 
-const update = async (req,res) => {
+const update = async (req, res) => {
+	try {
+		const id = req.params.id;
+		const { productname, quantity, productid, unitprice, minstock } = req.body;
 
-   try {
+		if (
+			productname == "" ||
+			quantity == "" ||
+			productid == "" ||
+			unitprice == "" ||
+			minstock == ""
+		) {
+			res.status(400).json({
+				success: false,
+				message: "All fields are required",
+			});
 
-      const id = req.params.id;
-      const {
-         productname, quantity, productid, unitprice, minstock } = req.body;
+			throw new ApiError(400, "All fields are required");
+			return;
+		}
 
-      if (productname == "" || quantity == "" || productid == "" || unitprice == "" || minstock == "") {
-         res.status(400).json({
-            success: false,
-            message: "All fields are required"
-         })
+		const data = await Inventory.findByIdAndUpdate(
+			id,
+			{
+				$set: {
+					productname: productname,
+					quantity: quantity,
+					productid: productid,
+					unitprice: unitprice,
+					minstock: minstock,
+				},
+			},
+			{ new: true }
+		);
 
-         throw new ApiError(400, "All fields are required")
-         return;
+		res.status(200).json({
+			success: true,
+			message: "Job updated!",
+		});
+	} catch (err) {
+		console.log(err);
 
-      }
+		res.status(500).json({
+			success: false,
+			message: "Internal server error",
+		});
 
-      const data = await Inventory.findByIdAndUpdate(id, {
-         $set: {
-            productname: productname,
-            quantity: quantity,
-            productid: productid,
-            unitprice: unitprice,
-            minstock: minstock
-
-           
-          },
-
-
-      }, { new: true })
-
-      res.status(200).json({
-         success: true,
-         message: "Job updated!",
-      });
-
-   } catch (err) {
-
-      console.log(err)
-
-      res.status(500).json({
-         success: false,
-         message: "Internal server error"
-      })
-
-      throw new ApiError(500, "Internal server error", err)
-   }
-}
+		throw new ApiError(500, "Internal server error", err);
+	}
+};
 
 const updatequantity = async (req, res) => {
+	try {
+		const id = req.params.id;
+		const { quantity } = req.body;
 
+		if (quantity == "") {
+			res.status(400).json({
+				success: false,
+				message: "All fields are required",
+			});
 
-   try {
+			throw new ApiError(400, "All fields are required");
+			return;
+		}
 
-      const id = req.params.id;
-      const {
-         quantity } = req.body;
+		const data = await Inventory.findByIdAndUpdate(
+			id,
+			{
+				$set: {
+					quantity: quantity,
+				},
+			},
+			{ new: true }
+		);
 
-      if (quantity == "") {
-         res.status(400).json({
-            success: false,
-            message: "All fields are required"
-         })
+		res.status(200).json({
+			success: true,
+			message: "Job updated!",
+		});
+	} catch (err) {
+		console.log(err);
 
-         throw new ApiError(400, "All fields are required")
-         return;
+		res.status(500).json({
+			success: false,
+			message: "Internal server error",
+		});
 
-      }
-
-      const data = await Inventory.findByIdAndUpdate(id, {
-         
-         $set: {
-            quantity: quantity
-          },
-        
-
-
-      }, { new: true })
-
-      res.status(200).json({
-         success: true,
-         message: "Job updated!",
-      });
-
-   } catch (err) {
-
-      console.log(err)
-
-      res.status(500).json({
-         success: false,
-         message: "Internal server error"
-      })
-
-      throw new ApiError(500, "Internal server error", err)
-   }
-
-
-}
-
+		throw new ApiError(500, "Internal server error", err);
+	}
+};
 
 const get = async (req, res) => {
+	try {
+		const id = req.user._id;
 
-   try {
+		const data = await Inventory.find({ user: id });
 
-      const id = req.user._id
+		if (data.length > 0) {
+			res.status(200).json({
+				status: true,
+				message: "Parties fetched successfully",
+				data: data,
+			});
 
-      const data = await Inventory.find({ user: id })
+			console.log(data);
+		} else {
+			res.status(200).json({
+				status: false,
+				message: "No inventory found",
+				data: [],
+			});
 
-      if (data.length > 0) {
-
-
-         res.status(200).json({
-            status: true,
-            message: "Parties fetched successfully",
-            data: data
-         })
-
-
-         console.log(data)
-      } else {
-
-         res.status(400).json({
-            status: false,
-            message: "No inventory found",
-            "data": {}
-         })
-
-
-         // throw new ApiError(400, "No parties found")
-      }
-   } catch (err) {
-      console.log(err)
-      res.status(500).json({
-         success: false,
-         message: "Internal server error"
-      })
-      throw new ApiError(500, "Internal server error", err)
-   }
-
-}
-
+			// throw new ApiError(400, "No parties found")
+		}
+	} catch (err) {
+		console.log(err);
+		res.status(500).json({
+			success: false,
+			message: "Internal server error",
+		});
+		throw new ApiError(500, "Internal server error", err);
+	}
+};
 
 const deletedata = async (req, res) => {
+	try {
+		const productId = req.params.id;
+		const deletedProduct = await Inventory.findByIdAndDelete(productId);
 
-   try {
-      const productId = req.params.id;
-      const deletedProduct = await Inventory.findByIdAndDelete(productId);
+		if (!deletedProduct) {
+			return res.status(404).json({ error: "Product not found" });
+		}
 
-      if (!deletedProduct) {
-         return res.status(404).json({ error: 'Product not found' });
-      }
-
-      res.status(200).json({ message: 'Product deleted successfully' });
-
-   } catch (err) {
-      console.log(err)
-      res.status(500).json({
-         success: false,
-         message: "Internal server error"
-      })
-      throw new ApiError(500, "Internal server error", err)
-   }
-}
-
+		res.status(200).json({ message: "Product deleted successfully" });
+	} catch (err) {
+		console.log(err);
+		res.status(500).json({
+			success: false,
+			message: "Internal server error",
+		});
+		throw new ApiError(500, "Internal server error", err);
+	}
+};
 
 const add = async (req, res) => {
+	try {
+		const id = req.user._id;
 
-   try {
-      const id = req.user._id
+		const { productname, quantity, productid, unitprice, minstock } = req.body;
+		console.log("data2", req.body);
+		if (
+			productname == "" ||
+			quantity == "" ||
+			productid == "" ||
+			unitprice == "" ||
+			minstock == ""
+		) {
+			res.status(400).json({
+				success: false,
+				message: "All fields are required",
+			});
 
+			throw new ApiError(400, "All fields are required");
+			return;
+		}
 
-      const {
+		console.log("data", req.body);
 
-         productname, quantity, productid, unitprice, minstock } = req.body;
-      console.log("data2", req.body)
-      if (productname == "" || quantity == "" || productid == "" || unitprice == "" || minstock == "") {
-         res.status(400).json({
-            success: false,
-            message: "All fields are required"
-         })
+		const data = await Inventory.create({
+			productname,
+			quantity,
+			productid,
+			unitprice,
+			minstock,
+			user: id,
+		});
 
-         throw new ApiError(400, "All fields are required")
-         return;
+		console.log("data2", data);
 
-      }
+		if (data) {
+			res.status(200).json({
+				success: true,
+				message: "Parties added successfully",
+				data: data,
+			});
+		} else {
+			res.status(400).json({
+				success: false,
+				message: "Failed to add parties",
+			});
 
-      console.log("data", req.body)
+			throw new ApiError(400, "Failed to add parties", err);
+		}
+	} catch (err) {
+		console.log("error", err);
+		res.status(500).json({
+			success: false,
+			message: "Internal server error",
+		});
+		throw new ApiError(500, "Internal server error", err);
+	}
+};
 
-
-      const data = await Inventory.create({
-         productname,
-         quantity,
-         productid,
-         unitprice,
-         minstock,
-         user: id
-
-
-      })
-
-      console.log("data2", data)
-
-
-      if (data) {
-         res.status(200).json({
-            success: true,
-            message: "Parties added successfully",
-            data: data
-         })
-      } else {
-
-         res.status(400).json({
-            success: false,
-            message: "Failed to add parties"
-         })
-
-         throw new ApiError(400, "Failed to add parties", err)
-      }
-   } catch (err) {
-      console.log("error", err)
-      res.status(500).json({
-         success: false,
-         message: "Internal server error"
-      })
-      throw new ApiError(500, "Internal server error", err)
-   }
-
-
-
-}
-
-
-export { add, deletedata, update, get , updatequantity}
+export { add, deletedata, update, get, updatequantity };

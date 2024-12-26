@@ -1,23 +1,20 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-   login: false,
-   accessToken: ""
+  login: false,
 };
 
 const dataSlice = createSlice({
-   name: 'auth',
-   initialState,
-   reducers: {
-     setLogin: (state, action) => {
-       state.login = true;
-       state.accessToken = action.payload;
-     },
-     clearLogin: (state) => {
-       state.login = false;
-       state.accessToken = "";
-     }
-   }
+  name: "auth",
+  initialState,
+  reducers: {
+    setLogin: (state, action) => {
+      state.login = true;
+    },
+    clearLogin: (state) => {
+      state.login = false;
+    },
+  },
 });
 
 export const { setLogin, clearLogin } = dataSlice.actions;
