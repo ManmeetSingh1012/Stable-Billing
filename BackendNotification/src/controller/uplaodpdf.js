@@ -1,4 +1,4 @@
-import send_mail from "../service/emailservice.js";
+import { send_mail } from "../service/emailservice.js";
 import { InvoiceHistory } from "../models/inovicehistory.js";
 import { geturl, puturl } from "../service/s3.js";
 import axios from "axios";
