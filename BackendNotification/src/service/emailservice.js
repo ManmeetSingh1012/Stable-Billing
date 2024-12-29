@@ -9,6 +9,9 @@ const send_mail = async (information) => {
       user: "manmeetsinghnss@gmail.com",
       pass: "jtbz vjak lfft dlyu", // Use an App Password here
     },
+    pool: true,
+    maxconnections: 5,
+    socketTimeout: 30000,
   });
 
   // Email data
@@ -40,8 +43,9 @@ const send_mail = async (information) => {
   //   console.log("control ends here");
 };
 
-const send_low_stock_notification = async ({ information }) => {
-  console.log("control is here" + information.email);
+const send_low_stock_notification = async (information) => {
+  console.log("control is here" + information);
+  console.log("control is here" + information.products);
 
   const transporter = nodemailer.createTransport({
     service: "Gmail",
@@ -49,6 +53,9 @@ const send_low_stock_notification = async ({ information }) => {
       user: "manmeetsinghnss@gmail.com",
       pass: "jtbz vjak lfft dlyu", // Use an App Password here
     },
+    pool: true,
+    maxconnections: 5,
+    socketTimeout: 30000,
   });
 
   // Email data
@@ -63,12 +70,12 @@ const send_low_stock_notification = async ({ information }) => {
           <p>Dear Customer,</p>
           <p>We hope this email finds you well. We want to inform you that the stock for one of your monitored products is running low:</p>
           <div style="margin: 20px 0; padding: 15px; background: #f9f9f9; border: 1px solid #e0e0e0; border-radius: 8px;">
-
-          
-
-          
-            <strong>Product Name:</strong> <span style="color: #D9534F;">${information.products}</span><br>
-           
+            ${information.products
+              .map(
+                (product) =>
+                  `<strong>Product Name:</strong> <span style="color: #D9534F;">${product}</span><br>`
+              )
+              .join("")}
           </div>
           <p>We recommend taking immediate action to replenish the stock to avoid interruptions.</p>
           <p>If you have any questions or need further assistance, feel free to contact us.</p>

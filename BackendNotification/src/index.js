@@ -6,7 +6,7 @@ import cron from "node-cron";
 import { lowstock } from "./service/lowstock.js";
 
 const task = cron.schedule(
-  " */1 * * * * *",
+  " */5  * * * *",
   () => {
     lowstock();
     console.log("Cron Job Running every 1 minute");
